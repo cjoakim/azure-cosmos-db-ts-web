@@ -1,0 +1,41 @@
+
+<body>
+<div class="container">
+<h3>Azure Cognitive Search of Indexed Cosmos DB Documents</h3>
+<h6>URI: <%= uri %></h6>
+
+<p></p>
+
+<form method="post">
+  <div class="mb-3">
+    <label for="index" class="form-label">Search Index Name</label>
+    <input type="text" class="form-control" id="index_name" name="index_name" value="<%= index_name %>">
+  </div>
+  <div class="mb-3">
+    <label for="text" class="form-label">Enter a Search as well-formed JSON</label>
+    <textarea rows='6' class="form-control" id="text" name="text" value="<%= text %>"><%= text %></textarea>
+  </div>
+  <div class="mb-3">
+    <button type="submit" class="btn btn-primary mb-3" id="submit_button" name="submit_button">Submit</button>
+  </div>
+</form>
+
+<div id="results_div">
+  <hr>
+  <h5>Search Results</h5>
+  <pre>
+  <code>
+  <%= results %>
+  </code>
+  </pre>
+</div>
+
+<br>
+<br>
+</div>
+</body>
+
+<script>
+var results_div = document.getElementById("results_div");
+results_div.style.visibility = '<%= results_visibility %>' // 'visible' or 'hidden'
+</script>

@@ -1,0 +1,61 @@
+<body>
+  <div class="container">
+  <h3>Azure Cosmos DB NoSQL Account - Metadata</h3>
+  <h6>URI: <%= uri %></h6>
+  
+  <p></p>
+
+  <h4></h4>
+  <br>
+  <ul>
+    <li>Click the "Get Account Metadata" button below</li>
+    <li>The application will gather and display database, container, and throughput metadata</li>
+    <li>This metadata is <strong>required for the other Cosmos DB pages of this application</strong></li>
+  </ul>
+  <br>
+  
+  <form class="row g-3" method="post">
+    <div class="col-3">
+      <button type="submit" class="btn btn-primary mb-3">Get Account Metadata</button>
+    </div>
+  </form>
+  
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Database</th>
+        <th>Container</th>
+        <th>Partition Key(s)</th>
+        <th>TTL</th>
+        <th>Analytic TTL</th>
+        <th>Throughput</th>
+      </tr>
+    </thead>
+    <tbody>
+
+    <% for(var i = 0; i < containers.length; i++) { %>
+        <tr>
+          <td><%= containers[i]['dbName'] %></td>
+          <td><%= containers[i]['cName'] %></td>
+          <td><%= containers[i]['pk'] %></td>
+          <td><%= containers[i]['ttl'] %></td>
+          <td><%= containers[i]['attl'] %></td>
+          <td><pre><%= containers[i]['throughput'] %></pre></td>
+        </tr>
+    <% } %>
+
+    </tbody>
+  </table>
+
+  <h5><%= results_message %></h5>
+  <pre>
+  <code>
+  <%= raw_json %>
+  </code>
+  </pre>
+  
+  <br>
+  <br>
+  </div>
+  </body>
+  

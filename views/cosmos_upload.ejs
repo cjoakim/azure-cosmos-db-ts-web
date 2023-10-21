@@ -1,0 +1,140 @@
+
+<body>
+<div class="container">
+<h3>Azure Cosmos DB NoSQL Account - Upload Documents (Bulk Load)</h3>
+
+<p></p>
+<h5>Documents Upload Form</h5>
+
+<form enctype="multipart/form-data" method="post" action="upload">
+  <div class="mb-3">
+    <label for="upload_db_container" class="form-label">Database & Container => Partition Key</label>
+    <select class="form-select" id="upload_db_container" name="upload_db_container">
+      <% for(var i = 0; i < dbs_containers.length; i++) { %>
+        <option value="<%= dbs_containers[i]['sortKey'] %>"> <%= dbs_containers[i]['sortKey'] %> => <%= dbs_containers[i]['pk'] %> </option>
+      <% } %>
+    </select>
+  </div>
+  <div class="mb-3">
+    <label for="file" class="form-label">JSON File containing an Array of Objects/Documents</label>
+    <input class="form-control" type="file" id="file" name="file">
+  </div>
+  <div class="mb-3 form-check">
+    <input class="form-check-input" type="checkbox" value="yes" id="genIdsCheckbox" name="genIdsCheckbox">
+    <label class="form-check-label" for="genIdsCheckbox">
+      Generate new id values for each document?
+    </label>
+  </div>
+  <input type="hidden" id="form_name" name="form_name" value="upload">
+  <div class="mb-3">
+    <button type="submit" class="btn btn-primary mb-3" id="uploadButton" name="uploadButton">Upload</button>
+  </div>
+</form>
+
+<hr>
+
+<div id="results_div">
+  <hr>
+  <h5><%= results_message %></h5>
+  <pre>
+  <code>
+  <%= results %>
+  </code>
+  </pre>
+</div>
+
+<hr>
+
+<h5>Example of the File Upload format - An Array of JSON Objects/Documents</h5>
+<ul>
+  <li>See example files <strong></strong>data/world-airports-50.json</strong> and <strong>data/baseball-players.json</strong>files in the GitHub repository</li>
+  <li>The <strong>id</strong> attribute is optional in each Object; Cosmos DB will generate it if absent</li>
+  <li>A value for your <strong>partition key attribute</strong> (i.e. - pk) is required</li>
+  <li>An Array is defined with [] syntax, an Object with {} syntax.  Objects may be nested.</li>
+</ul>
+<pre>
+<code>
+[
+  {
+    "name": "Charlotte Douglas Intl",
+    "city": "Charlotte",
+    "country": "United States",
+    "iata_code": "CLT",
+    "latitude": "35.214",
+    "longitude": "-80.943139",
+    "altitude": "748",
+    "timezone_num": "-5",
+    "timezone_code": "America/New_York",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        -80.943139,
+        35.214
+      ]
+    },
+    "id": "9ad30f52-c5b0-11e9-b569-1d2738125247",
+    "pk": "CLT"
+  },
+  {
+    "name": "Mc Carran Intl",
+    "city": "Las Vegas",
+    "country": "United States",
+    "iata_code": "LAS",
+    "latitude": "36.080056",
+    "longitude": "-115.15225",
+    "altitude": "2141",
+    "timezone_num": "-8",
+    "timezone_code": "America/Los_Angeles",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        -115.15225,
+        36.080056
+      ]
+    },
+    "id": "9ad30f53-c5b0-11e9-b569-1d2738125247",
+    "pk": "LAS"
+  },
+  {
+    "name": "Orlando Intl",
+    "city": "Orlando",
+    "country": "United States",
+    "iata_code": "MCO",
+    "latitude": "28.429394",
+    "longitude": "-81.308994",
+    "altitude": "96",
+    "timezone_num": "-5",
+    "timezone_code": "America/New_York",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        -81.308994,
+        28.429394
+      ]
+    },
+    "id": "9ad30f54-c5b0-11e9-b569-1d2738125247",
+    "pk": "MCO"
+  }
+]
+</code>
+</pre>
+
+<br>
+<br>
+</div>
+</body>
+
+<script>
+results_div.style.visibility = '<%= results_visibility %>' // 'visible' or 'hidden'
+
+var upload_db_container = document.getElementById("upload_db_container");
+upload_db_container.value = '<%= curr_db_container %>'
+
+var uploadButton = document.getElementById("uploadButton");
+uploadButton.disabled = true;
+
+var fileSelector = document.getElementById("file");
+fileSelector.onchange = function(e) {
+  uploadButton.disabled = false;
+};
+</script>

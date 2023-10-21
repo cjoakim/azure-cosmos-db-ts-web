@@ -1,0 +1,126 @@
+
+<body>
+<div class="container">
+<h3>Azure Cosmos DB CRUD Operations - Upload, Create, Upsert, and Delete</h3>
+
+<p></p>
+<h5>Documents Upload Form</h5>
+
+<form enctype="multipart/form-data" method="post" action="upload">
+  <div class="mb-3">
+    <label for="upload_db_container" class="form-label">Database & Container => Partition Key</label>
+    <select class="form-select" id="upload_db_container" name="upload_db_container">
+      <% for(var i = 0; i < dbs_containers.length; i++) { %>
+        <option value="<%= dbs_containers[i]['sortKey'] %>"> <%= dbs_containers[i]['sortKey'] %> => <%= dbs_containers[i]['pk'] %> </option>
+      <% } %>
+    </select>
+  </div>
+  <div class="mb-3">
+    <label for="file" class="form-label">JSON File containing an Array of Objects/Documents</label>
+    <input class="form-control" type="file" id="file" name="file">
+  </div>
+  <div class="mb-3 form-check">
+    <input class="form-check-input" type="checkbox" value="yes" id="genIdsCheckbox" name="genIdsCheckbox">
+    <label class="form-check-label" for="genIdsCheckbox">
+      Generate new id values for each document?
+    </label>
+  </div>
+  <input type="hidden" id="form_name" name="form_name" value="upload">
+  <div class="mb-3">
+    <button type="submit" class="btn btn-primary mb-3" id="uploadButton" name="uploadButton">Upload</button>
+  </div>
+</form>
+
+<hr>
+
+<p></p>
+<h5>Document CRUD Form</h5>
+<form method="post" action="crud" onsubmit="return validateCrudJson()">
+  <div class="mb-3">
+    <label for="crud_db_container" class="form-label">Database & Container => Partition Key</label>
+    <select class="form-select" id="crud_db_container" name="crud_db_container">
+      <% for(var i = 0; i < dbs_containers.length; i++) { %>
+        <option value="<%= dbs_containers[i]['sortKey'] %>"> <%= dbs_containers[i]['sortKey'] %> => <%= dbs_containers[i]['pk'] %> </option>
+      <% } %>
+    </select>
+  </div>
+  <div class="mb-3">
+    <label for="text" class="form-label">Enter a well-formed JSON Document, then select an operation - Create, Upsert, Delete</label>
+    <textarea rows='15' class="form-control" id="crud_text" name="crud_text"><%= crud_text %></textarea>
+  </div>
+  <div class="mb-3">
+    <select class="form-select" id="crud_operation" name="crud_operation">
+      <option selected value="create">Create</option>
+      <option value="upsert">Upsert</option>
+      <option value="delete">Delete</option>
+    </select>
+  </div>
+  <div class="mb-3">
+    <button type="submit" class="btn btn-primary mb-3" id="crudButton" name="crudButton">Submit</button>
+  </div>
+
+  <p class="text-danger" id="crud_form_message" name="crud_form_message"></p>
+</form>
+
+
+<div id="results_div">
+  <hr>
+  <h5><%= results_message %></h5>
+  <pre>
+  <code>
+  <%= results %>
+  </code>
+  </pre>
+</div>
+
+
+<br>
+<br>
+</div>
+</body>
+
+<script>
+results_div.style.visibility = '<%= results_visibility %>' // 'visible' or 'hidden'
+
+var upload_db_container = document.getElementById("upload_db_container");
+upload_db_container.value = '<%= curr_db_container %>'
+
+var crud_db_container = document.getElementById("crud_db_container");
+crud_db_container.value = '<%= curr_db_container %>'
+
+var uploadButton = document.getElementById("uploadButton");
+uploadButton.disabled = true;
+
+var crudButton = document.getElementById("uploadButton");
+crudButton.disabled = true;
+
+var fileSelector = document.getElementById("file");
+fileSelector.onchange = function(e) {
+  uploadButton.disabled = false;
+};
+
+var crudText = document.getElementById("crud_text");
+console.log(crudText);
+crudText.onchange  = function(e) {
+  crudFormMessage.innerHTML = ''
+};
+
+var crudFormMessage = document.getElementById("crud_form_message");
+
+function validateCrudJson() {
+  console.log('validateCrudJson');
+  try {
+    var doc = JSON.parse(crudText.value);
+    if (doc) {
+      return true;
+    }
+  }
+  catch {
+    crudFormMessage.innerHTML = 'Invalid JSON, please correct it then try again';
+    setTimeout(function() {
+      crudFormMessage.innerHTML = ''; },
+      5000);
+  }
+  return false;
+}
+</script>

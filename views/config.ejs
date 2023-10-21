@@ -1,0 +1,46 @@
+
+<body>
+  <div class="container">
+    <h3>Application Configuration</h3>
+
+    <p></p>
+
+    <ul>
+      <li>This application uses the following specific <strong>environment variables</strong> listed below</li>
+      <li>The <strong>actual values for this deployment are shown below</strong>; the secret values are truncated with "..."</li>
+      <li>The application is easily deployable to Azure Docker Container PaaS services - such as <strong>Azure Container Instances (ACI)</strong></li>
+      <li>See the /az directory in the GitHub repository for <strong>az CLI</strong> deployment scripts</li>
+      <li>See the <strong>docker-compose-web.yml</strong> file in the repo to run the Docker image locally with compose</li>
+    </ul>
+
+    <p></p>
+
+    <hr>
+    <h4>Environment Variable Details</h4>
+
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>Required Environment Variable Name</th>
+          <th>Deployment Environment Variable Value</th>
+        </tr>
+      </thead>
+      <tbody>
+
+      <% for(var i=0; i < envVarsList.length; i++) { %>
+          <tr>
+            <td><%= envVarsList[i]['name'] %></td>
+            <td><%= envVarsList[i]['value'] %></td>
+          </tr>
+      <% } %>
+
+      </tbody>
+    </table>
+
+    The current HTTP session database/container pair is <strong><%= db_container %></strong>.
+
+    <br>
+    <br>
+  </div>
+</body>
+

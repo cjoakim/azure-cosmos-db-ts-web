@@ -1,0 +1,73 @@
+
+<body>
+<div class="container">
+<h3>Azure Cosmos DB NoSQL Account - CRUD Operations - Create, Upsert, and Delete</h3>
+
+<p></p>
+<h5>Document CRUD Form</h5>
+<form method="post" action="crud" onsubmit="return validateCrudJsonOnFormSubmit()">
+  <div class="mb-3">
+    <label for="db_container" class="form-label">Database & Container => Partition Key</label>
+    <select class="form-select" id="db_container" name="db_container">
+      <% for(var i = 0; i < dbs_containers.length; i++) { %>
+        <option value="<%= dbs_containers[i]['sortKey'] %>"> <%= dbs_containers[i]['sortKey'] %> => <%= dbs_containers[i]['pk'] %> </option>
+      <% } %>
+    </select>
+  </div>
+  <div class="mb-3">
+    <label for="text" class="form-label">
+      <br>
+      Enter a well-formed JSON Document, then select an operation - Create, Upsert, Delete.<br>
+      A sample document is shown below, but you can paste in your own JSON Document.<br>
+      The JSON will be validated in the browser before being sent to the server.
+      <br><br>
+    </label>
+    <textarea rows='15' class="form-control" id="crud_text" name="crud_text"><%= crud_text %></textarea>
+  </div>
+  <div class="mb-3">
+    <select class="form-select" id="crud_operation" name="crud_operation">
+      <option selected value="create">Create</option>
+      <option value="upsert">Upsert</option>
+      <option value="delete">Delete</option>
+    </select>
+  </div>
+  <div class="mb-3">
+    <button type="submit" class="btn btn-primary mb-3" id="crudButton" name="crudButton">Submit</button>
+  </div>
+
+  <p class="text-danger" id="crud_form_message" name="crud_form_message"></p>
+</form>
+
+<br>
+<br>
+</div>
+</body>
+
+<script>
+var db_container = document.getElementById("db_container");
+db_container.value = '<%= curr_db_container %>'
+
+var crudText = document.getElementById("crud_text");
+crudText.onchange  = function(e) {
+  crudFormMessage.innerHTML = ''
+};
+
+var crudFormMessage = document.getElementById("crud_form_message");
+
+function validateCrudJsonOnFormSubmit() {
+  // return true if the form should be submitted; false if not
+  try {
+    var doc = JSON.parse(crudText.value);
+    if (doc) {
+      return true;
+    }
+  }
+  catch {
+    crudFormMessage.innerHTML = 'Invalid JSON, please correct it then try again';
+    setTimeout(function() {
+      crudFormMessage.innerHTML = ''; },
+      5000);
+  }
+  return false;
+}
+</script>
