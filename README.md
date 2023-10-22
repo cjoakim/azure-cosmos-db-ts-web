@@ -11,13 +11,15 @@ This web application is intended for these several purposes:
   - **Azure Cosmos DB NoSQL API**
   - **Azure OpenAI**
   - Azure Cognitive Search
-- To provide a working **Node.js, TypeScript** application
+- To provide a working **Node.js, TypeScript starter application**
   - Which uses the **Azure SDK for JavaScript**
   - Azure SDK invoked by the **azu-js** NPM library for ease of use 
+  - The popular **Express** web framework is used, suitable for either UI applications or microservices
 
-The aim is to provide simple and reliable deployments via the use of a Docker image.
+The aim is to provide simple and reliable deployments via the use of a Docker image on DockerHub.
+
 There are three **deployment modes** - **code, Docker Compose, or Azure Container Instance (ACI)**.
-Choose the mode that best fits your skills and workstation/laptop.
+Choose the mode that best fits your skills and workstation/laptop configuration.
 
 <p align="center">
   <img src="docs/architecture.png" width="100%">
@@ -31,23 +33,50 @@ Choose the mode that best fits your skills and workstation/laptop.
 ### About Page
 
 <p align="center">
-  <img src="docs/img/willie-mays-the-catch.jpeg" width="100%">
+  <img src="docs/images/about-page.png" width="100%">
 </p>
-
 
 ### Configuration Page
 
+<p align="center">
+  <img src="docs/images/configuration-page.png" width="100%">
+</p>
+
 ### Cosmos DB Metadata Page
+
+<p align="center">
+  <img src="docs/images/cosmosdb-metadata-page.png" width="100%">
+</p>
 
 ### Cosmos DB Upload Page
 
+<p align="center">
+  <img src="docs/images/cosmosdb-upload-page.png" width="100%">
+</p>
+
 ### Cosmos DB Query Page
+
+<p align="center">
+  <img src="docs/images/cosmosdb-query-page.png" width="100%">
+</p>
 
 ### Cosmos DB CRUD Operations Page
 
+<p align="center">
+  <img src="docs/images/cosmosdb-crud-page.png" width="100%">
+</p>
+
 ### Open AI Page
 
+<p align="center">
+  <img src="docs/images/openai-page.png" width="100%">
+</p>
+
 ### Cognitive Search Page
+
+<p align="center">
+  <img src="docs/images/cognitive-search-page.png" width="100%">
+</p>
 
 ---
 
