@@ -7,7 +7,7 @@ import util from "util";
 import multer from "multer";
 
 import { Request, Response, Router } from 'express';
-import { ItemResponse, SqlQuerySpec } from "@azure/cosmos";
+import { ItemResponse, SqlQuerySpec, PatchOperation, PatchOperationType } from "@azure/cosmos";
 import { BulkLoadResult, CosmosNoSqlUtil, CosmosNoSqlAccountMeta } from "azu-js";
 import { UIHelper } from "./UIHelper";
 
@@ -297,12 +297,21 @@ router.post("/crud", async (req: Request, res: Response) => {
             upsertResp.statusCode, upsertResp.requestCharge);
           break;
       case "patch":
-        UIHelper.logBody(req);
-          // let patchResp : ItemResponse<Object> = await cosmos.patchDocumentAsync(dbname, cname, doc);
-          // crud_text = JSON.stringify(patchResp.resource, null, 2);
-          // results_message = util.format(
-          //   'Patch - statusCode %s, requestCharge %s', 
-          //   patchResp.statusCode, patchResp.requestCharge);
+          UIHelper.logBody(req);
+          console.log(JSON.stringify(doc, null, 2));
+          let id = doc['id'];
+          let partitionKey = lookupPartitionKeyAttr(req, dbname, cname);
+          let partitionKeyValue = doc[partitionKey];
+          console.log(util.format('dbname: %s, cname: %s, id: %s, partitionKey: %s', dbname, cname, id, partitionKeyValue));
+          let patchOperations = buildPatchOperations(doc, patch_attributes);
+          console.log('patchOperations -> ' + JSON.stringify(patchOperations, null, 2));
+          let patchResp : ItemResponse<Object> = 
+            await cosmos.patchDocumentAsync(
+              dbname, cname, id, partitionKeyValue, patchOperations);
+          crud_text = JSON.stringify(patchResp.resource, null, 2);
+          results_message = util.format(
+              'Patch - statusCode %s, requestCharge %s', 
+              patchResp.statusCode, patchResp.requestCharge);
           break;
       case "delete":
           let deleteResp : ItemResponse<Object> = await cosmos.deleteDocumentAsync(dbname, cname, doc['id'], doc['pk']);
@@ -465,5 +474,57 @@ function readDatabasesAndContainersList(req: Request): Array<object> {
     return [];
   }
 }
+
+function lookupPartitionKeyAttr(req: Request, dbname : string, cname: string) : string {
+  try {
+    let dbsContainers: Array<object> = readDatabasesAndContainersList(req);
+    let key = '' + dbname + ' | ' + cname;
+    //console.log('lookupPartitionKeyAttr key: ' + key + ', dbsContainers.length: ' + dbsContainers.length);
+    for (var i = 0; i < dbsContainers.length; i++) {
+      let dbc = dbsContainers[i];
+      if (dbc['sortKey'] == key) {
+        return dbc['pk'].replace('/','');
+      }
+    }
+  }
+  catch (error) {
+      console.log('error in lookupPartitionKeyAttr');
+  }
+  return 'pk';  // default
+}
+
+function buildPatchOperations(doc : object, patch_attributes : string) : Array<PatchOperation> {
+  let operations = new Array<PatchOperation>();
+  let patch_attributes_list = patch_attributes.split(' ');
+
+  for (var i = 0; i < patch_attributes_list.length; i++) {
+    let attrWithOp = patch_attributes_list[i].trim();  // examples: '+name', '-name', or just 'name'
+    let attr = patch_attributes_list[i].trim();
+    let opName = 'replace';
+
+    if (attrWithOp.startsWith('+')) {
+      opName = 'add';
+      attr = attrWithOp.replace('+', '');
+    }
+    if (attrWithOp.startsWith('-')) {
+      opName = 'remove';
+      attr = attrWithOp.replace('-', '');
+    }
+
+    switch (opName) {
+      case "add":
+        operations.push({op: PatchOperationType.add, value: doc[attr], path:  '/' + attr});
+          break;
+      case "replace":
+        operations.push({op: PatchOperationType.replace, value: doc[attr], path:  '/' + attr});
+          break;
+      case "remove":
+        operations.push({op: PatchOperationType.remove, path:  '/' + attr});
+          break;
+    }
+  }
+  return operations;
+}
+
 
 export const CosmosRouter: Router = router;
