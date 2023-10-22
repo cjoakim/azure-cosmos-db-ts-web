@@ -28,8 +28,13 @@
     <select class="form-select" id="crud_operation" name="crud_operation">
       <option selected value="create">Create</option>
       <option value="upsert">Upsert</option>
+      <option value="patch">Patch</option>
       <option value="delete">Delete</option>
     </select>
+  </div>
+  <div class="mb-3">
+    <label for="patch_attributes" class="form-label">Patch Attributes for above Document - +attrName to add, -attrName to delete, attrName to change</label>
+    <input type="text" class="form-control" id="patch_attributes" name="patch_attributes" value="<%= patch_attributes %>">
   </div>
   <div class="mb-3">
     <button type="submit" class="btn btn-primary mb-3" id="crudButton" name="crudButton">Submit</button>

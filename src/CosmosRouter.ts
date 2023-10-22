@@ -232,6 +232,7 @@ router.get("/crud", async (req: Request, res: Response) => {
     results_visibility: 'hidden',
     results_message: '',
     results: '',
+    patch_attributes: '',
     crud_text: JSON.stringify(UIHelper.sampleCosmosDbNoSqlDocument(), null, 2)
   });
 })
@@ -244,7 +245,9 @@ router.post("/crud", async (req: Request, res: Response) => {
   let db_container = req.body.db_container;
   let dbname = db_container.split('|')[0].trim();
   let cname = db_container.split('|')[1].trim();
+  let patch_attributes = req.body.patch_attributes.trim();
   let op = req.body.crud_operation;
+
 
   console.log(db_container);
   console.log(dbname);
@@ -270,6 +273,13 @@ router.post("/crud", async (req: Request, res: Response) => {
             'Upsert - statusCode %s, requestCharge %s', 
             upsertResp.statusCode, upsertResp.requestCharge);
           break;
+      // case "patch":
+      //     let patchResp : ItemResponse<Object> = await cosmos.patchDocumentAsync(dbname, cname, doc);
+      //     crud_text = JSON.stringify(patchResp.resource, null, 2);
+      //     results_message = util.format(
+      //       'Patch - statusCode %s, requestCharge %s', 
+      //       patchResp.statusCode, patchResp.requestCharge);
+      //     break;
       case "delete":
           let deleteResp : ItemResponse<Object> = await cosmos.deleteDocumentAsync(dbname, cname, doc['id'], doc['pk']);
           crud_text = JSON.stringify(doc, null, 2);  // the document before deletion
@@ -293,6 +303,7 @@ router.post("/crud", async (req: Request, res: Response) => {
     results_visibility: 'visible',
     results_message: results_message,
     results: results,
+    patch_attributes: patch_attributes,
     crud_text: crud_text
   });
 })
