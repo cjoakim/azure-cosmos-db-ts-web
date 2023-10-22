@@ -19,6 +19,7 @@ const cosmos: CosmosNoSqlUtil = new CosmosNoSqlUtil(
 
 // local cache files
 const NOSQL_DBS_CONTAINERS_LIST = 'tmp/nosql_dbs_containers_list.json';
+const GET_COSMOS_DB_NOSQL_METADATA_URL = '/cosmos/metadata';
 
 const upload = multer({ dest: UIHelper.uploadsDir() });
 const fu = UIHelper.fileUtil();
@@ -128,7 +129,10 @@ router.post("/metadata", async (req: Request, res: Response) => {
 // ==================== query ====================
 
 router.get("/query", async (req: Request, res: Response) => {
-  let dbsContainers: Array<object> = readDatabasesAndContainersList();
+  let dbsContainers: Array<object> = readDatabasesAndContainersList(req);
+  if (dbsContainers.length < 1) {
+    res.redirect(GET_COSMOS_DB_NOSQL_METADATA_URL);
+  }
   UIHelper.ensureSession(req);
   res.render('cosmos_query', {
     uri: cosmos.acctUri,
@@ -143,7 +147,10 @@ router.get("/query", async (req: Request, res: Response) => {
 })
 
 router.post("/query", async (req: Request, res: Response) => {
-  let dbsContainers: Array<object> = readDatabasesAndContainersList();
+  let dbsContainers: Array<object> = readDatabasesAndContainersList(req);
+  if (dbsContainers.length < 1) {
+    res.redirect(GET_COSMOS_DB_NOSQL_METADATA_URL);
+  }
   UIHelper.ensureSession(req);
 
   let db_container = req.body.db_container;
@@ -221,10 +228,13 @@ router.post("/query", async (req: Request, res: Response) => {
 // ==================== crud ====================
 
 router.get("/crud", async (req: Request, res: Response) => {
+  let dbsContainers: Array<object> = readDatabasesAndContainersList(req);
+  if (dbsContainers.length < 1) {
+    res.redirect(GET_COSMOS_DB_NOSQL_METADATA_URL);
+  }
   UIHelper.ensureSession(req);
   UIHelper.deleteUploadFiles();
 
-  let dbsContainers: Array<object> = readDatabasesAndContainersList();
   res.render('cosmos_crud', {
     uri: cosmos.acctUri,
     dbs_containers: dbsContainers,
@@ -238,7 +248,12 @@ router.get("/crud", async (req: Request, res: Response) => {
 })
 
 router.post("/crud", async (req: Request, res: Response) => {
+  let dbsContainers: Array<object> = readDatabasesAndContainersList(req);
+  if (dbsContainers.length < 1) {
+    res.redirect(GET_COSMOS_DB_NOSQL_METADATA_URL);
+  }
   UIHelper.ensureSession(req);
+
   let results_message = '';
   let results = '';
   let crud_text = '';
@@ -295,7 +310,6 @@ router.post("/crud", async (req: Request, res: Response) => {
       results_message = 'Error';
   }
 
-  let dbsContainers: Array<object> = readDatabasesAndContainersList();
   res.render('cosmos_crud', {
     uri: cosmos.acctUri,
     dbs_containers: dbsContainers,
@@ -311,10 +325,13 @@ router.post("/crud", async (req: Request, res: Response) => {
 // ==================== upload ====================
 
 router.get("/upload", async (req: Request, res: Response) => {
+  let dbsContainers: Array<object> = readDatabasesAndContainersList(req);
+  if (dbsContainers.length < 1) {
+    res.redirect(GET_COSMOS_DB_NOSQL_METADATA_URL);
+  }
   UIHelper.ensureSession(req);
   UIHelper.deleteUploadFiles();
 
-  let dbsContainers: Array<object> = readDatabasesAndContainersList();
   res.render('cosmos_upload', {
     uri: cosmos.acctUri,
     dbs_containers: dbsContainers,
@@ -326,7 +343,10 @@ router.get("/upload", async (req: Request, res: Response) => {
 })
 
 router.post("/upload", upload.single('file'), async (req: Request, res: Response) => {
-  let dbsContainers: Array<object> = readDatabasesAndContainersList();
+  let dbsContainers: Array<object> = readDatabasesAndContainersList(req);
+  if (dbsContainers.length < 1) {
+    res.redirect(GET_COSMOS_DB_NOSQL_METADATA_URL);
+  }
   let results_message = '';
   let results = '';
 
@@ -410,9 +430,10 @@ function isQueryFormValid(db_container: string, sql: string): boolean {
   return false;
 }
 
-function readDatabasesAndContainersList(): Array<object> {
+function readDatabasesAndContainersList(req: Request): Array<object> {
   try {
-    return fu.readJsonArrayFile(NOSQL_DBS_CONTAINERS_LIST);
+    let array = fu.readJsonArrayFile(NOSQL_DBS_CONTAINERS_LIST);
+    return Array.isArray(array) ? array : [];
   }
   catch (error) {
     console.log(error);
