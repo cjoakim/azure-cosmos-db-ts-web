@@ -16,6 +16,7 @@ const fu: FileUtil = new FileUtil();
 export class UIHelper {
 
     private static definedSessionKeys = [
+        'session_id',
         'user_id',
         'db_container',
         'dbname',
@@ -41,6 +42,9 @@ export class UIHelper {
             for (var i = 0; i < this.definedSessionKeys.length; i++) {
                 let key = this.definedSessionKeys[i];
                 switch (key) {
+                    case "session_id":
+                        req.session[key] = (req.session[key] || uuidv4());
+                        break;
                     case "user_id":
                         // retain the current value, if any
                         break;
@@ -82,6 +86,14 @@ export class UIHelper {
             console.log('error in clearSession');
         }
         return;
+    }
+
+    static sessionId(req: Request): string {
+        return req.session['session_id'];
+    }
+
+    static sessionUserId(req: Request): string {
+        return req.session['user_id'];
     }
 
     static logSession(req: Request): void {
@@ -214,6 +226,9 @@ export class UIHelper {
 
     private static deleteFilesInDir(dir: string): void {
         try {
+            fu.listFilesInDir(dir).forEach((file) => {
+                console.log('deleteFilesInDir dir: ' + dir + ' file: ' + file);
+            });
             return fu.deleteFilesInDir(dir);
         }
         catch (error) {

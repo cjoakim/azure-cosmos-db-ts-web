@@ -17,9 +17,10 @@ const cosmos: CosmosNoSqlUtil = new CosmosNoSqlUtil(
   'AZURE_COSMOSDB_NOSQL_URI',
   'AZURE_COSMOSDB_NOSQL_RW_KEY1');
 
-// local cache files
-const NOSQL_DBS_CONTAINERS_LIST = 'tmp/nosql_dbs_containers_list.json';
-const GET_COSMOS_DB_NOSQL_METADATA_URL = '/cosmos/metadata';
+const GET_COSMOS_DB_METADATA_URL = '/cosmos/metadata';
+const GET_COSMOS_DB_UPLOAD_URL   = '/cosmos/upload';
+const GET_COSMOS_DB_QUERY_URL    = '/cosmos/query';
+const GET_COSMOS_DB_CRUD_URL     = '/cosmos/crud';
 
 const upload = multer({ dest: UIHelper.uploadsDir() });
 const fu = UIHelper.fileUtil();
@@ -49,9 +50,9 @@ router.get("/metadata", async (req: Request, res: Response) => {
 })
 
 router.post("/metadata", async (req: Request, res: Response) => {
+  UIHelper.ensureSession(req);
   let uri: string = '';
   try {
-    UIHelper.ensureSession(req);
     try {
       uri = cosmos.acctUri;
     }
@@ -93,11 +94,8 @@ router.post("/metadata", async (req: Request, res: Response) => {
         });
       });
     });
-  
     uiContainers.sort(function (a, b) { return (a.sortKey > b.sortKey) ? 1 : ((b.sortKey > a.sortKey) ? -1 : 0); });
-  
-    fu.writeTextFileSync('tmp/woven_metadata.json', JSON.stringify(woven, null, 2));
-    fu.writeTextFileSync(NOSQL_DBS_CONTAINERS_LIST, JSON.stringify(uiContainers, null, 2));
+    fu.writeTextFileSync(noSqlDbsContainersFile(req), JSON.stringify(uiContainers, null, 2));
   
     let containersList: object[] = [];
     res.render('cosmos_metadata', {
@@ -125,13 +123,13 @@ router.post("/metadata", async (req: Request, res: Response) => {
   });
 })
 
-
 // ==================== query ====================
 
 router.get("/query", async (req: Request, res: Response) => {
   let dbsContainers: Array<object> = readDatabasesAndContainersList(req);
   if (dbsContainers.length < 1) {
-    res.redirect(GET_COSMOS_DB_NOSQL_METADATA_URL);
+    res.redirect(GET_COSMOS_DB_METADATA_URL);
+    return;
   }
   UIHelper.ensureSession(req);
   res.render('cosmos_query', {
@@ -149,11 +147,16 @@ router.get("/query", async (req: Request, res: Response) => {
 router.post("/query", async (req: Request, res: Response) => {
   let dbsContainers: Array<object> = readDatabasesAndContainersList(req);
   if (dbsContainers.length < 1) {
-    res.redirect(GET_COSMOS_DB_NOSQL_METADATA_URL);
+    res.redirect(GET_COSMOS_DB_METADATA_URL);
+    return;
+  }
+  let db_container = req.body.db_container;
+  if (!db_container || db_container.trim().length < 1) {
+    res.redirect(GET_COSMOS_DB_QUERY_URL);
+    return;
   }
   UIHelper.ensureSession(req);
 
-  let db_container = req.body.db_container;
   let dbname = db_container.split('|')[0].trim();
   let cname = db_container.split('|')[1].trim();
   let sql = req.body.sql;
@@ -230,7 +233,8 @@ router.post("/query", async (req: Request, res: Response) => {
 router.get("/crud", async (req: Request, res: Response) => {
   let dbsContainers: Array<object> = readDatabasesAndContainersList(req);
   if (dbsContainers.length < 1) {
-    res.redirect(GET_COSMOS_DB_NOSQL_METADATA_URL);
+    res.redirect(GET_COSMOS_DB_METADATA_URL);
+    return;
   }
   UIHelper.ensureSession(req);
   UIHelper.deleteUploadFiles();
@@ -250,19 +254,23 @@ router.get("/crud", async (req: Request, res: Response) => {
 router.post("/crud", async (req: Request, res: Response) => {
   let dbsContainers: Array<object> = readDatabasesAndContainersList(req);
   if (dbsContainers.length < 1) {
-    res.redirect(GET_COSMOS_DB_NOSQL_METADATA_URL);
+    res.redirect(GET_COSMOS_DB_METADATA_URL);
+    return;
+  }
+  let db_container = req.body.db_container;
+  if (!db_container || db_container.trim().length < 1) {
+    res.redirect(GET_COSMOS_DB_CRUD_URL);
+    return;
   }
   UIHelper.ensureSession(req);
 
-  let results_message = '';
-  let results = '';
-  let crud_text = '';
-  let db_container = req.body.db_container;
   let dbname = db_container.split('|')[0].trim();
   let cname = db_container.split('|')[1].trim();
   let patch_attributes = req.body.patch_attributes.trim();
   let op = req.body.crud_operation;
-
+  let results_message = '';
+  let results = '';
+  let crud_text = '';
 
   console.log(db_container);
   console.log(dbname);
@@ -288,13 +296,14 @@ router.post("/crud", async (req: Request, res: Response) => {
             'Upsert - statusCode %s, requestCharge %s', 
             upsertResp.statusCode, upsertResp.requestCharge);
           break;
-      // case "patch":
-      //     let patchResp : ItemResponse<Object> = await cosmos.patchDocumentAsync(dbname, cname, doc);
-      //     crud_text = JSON.stringify(patchResp.resource, null, 2);
-      //     results_message = util.format(
-      //       'Patch - statusCode %s, requestCharge %s', 
-      //       patchResp.statusCode, patchResp.requestCharge);
-      //     break;
+      case "patch":
+        UIHelper.logBody(req);
+          // let patchResp : ItemResponse<Object> = await cosmos.patchDocumentAsync(dbname, cname, doc);
+          // crud_text = JSON.stringify(patchResp.resource, null, 2);
+          // results_message = util.format(
+          //   'Patch - statusCode %s, requestCharge %s', 
+          //   patchResp.statusCode, patchResp.requestCharge);
+          break;
       case "delete":
           let deleteResp : ItemResponse<Object> = await cosmos.deleteDocumentAsync(dbname, cname, doc['id'], doc['pk']);
           crud_text = JSON.stringify(doc, null, 2);  // the document before deletion
@@ -327,7 +336,8 @@ router.post("/crud", async (req: Request, res: Response) => {
 router.get("/upload", async (req: Request, res: Response) => {
   let dbsContainers: Array<object> = readDatabasesAndContainersList(req);
   if (dbsContainers.length < 1) {
-    res.redirect(GET_COSMOS_DB_NOSQL_METADATA_URL);
+    res.redirect(GET_COSMOS_DB_METADATA_URL);
+    return;
   }
   UIHelper.ensureSession(req);
   UIHelper.deleteUploadFiles();
@@ -345,7 +355,8 @@ router.get("/upload", async (req: Request, res: Response) => {
 router.post("/upload", upload.single('file'), async (req: Request, res: Response) => {
   let dbsContainers: Array<object> = readDatabasesAndContainersList(req);
   if (dbsContainers.length < 1) {
-    res.redirect(GET_COSMOS_DB_NOSQL_METADATA_URL);
+    res.redirect(GET_COSMOS_DB_METADATA_URL);
+    return;
   }
   let results_message = '';
   let results = '';
@@ -353,6 +364,10 @@ router.post("/upload", upload.single('file'), async (req: Request, res: Response
   try {
     UIHelper.ensureSession(req);
     let db_container = req.body.upload_db_container;
+    if (!db_container || db_container.trim().length < 1) {
+      res.redirect(GET_COSMOS_DB_UPLOAD_URL);
+      return;
+    }
     let dbname = db_container.split('|')[0].trim();
     let cname = db_container.split('|')[1].trim();
     results_message = 'Upload Results';
@@ -430,9 +445,19 @@ function isQueryFormValid(db_container: string, sql: string): boolean {
   return false;
 }
 
+function noSqlDbsContainersFile(req: Request): string {
+  try {
+    return util.format('tmp/nosql_dbs_containers_%s.json', UIHelper.sessionId(req));
+  }
+  catch (error) {
+    return 'tmp/nosql_dbs_containers.json';
+  }
+}
+
 function readDatabasesAndContainersList(req: Request): Array<object> {
   try {
-    let array = fu.readJsonArrayFile(NOSQL_DBS_CONTAINERS_LIST);
+    let infile = noSqlDbsContainersFile(req);
+    let array  = fu.readJsonArrayFile(infile);
     return Array.isArray(array) ? array : [];
   }
   catch (error) {

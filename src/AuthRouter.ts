@@ -72,6 +72,10 @@ function isAuthenticatedUser(user_id: string, password: string): boolean {
         for (const defIdPw of definedUsers) {
           if (user_id == defIdPw[0]) {
             if (password == defIdPw[1]) {
+              if (user_id == 'reaper') {
+                UIHelper.deleteTmpFiles();
+                UIHelper.deleteUploadFiles();
+              }
               return true;
             }
           }
@@ -99,7 +103,6 @@ function getAuthPairs(): Array<object> {
   catch (error) {
     console.log(error);
   }
-  console.log('getAuthPairs: ' + JSON.stringify(pairs));
   return pairs;
 }
 

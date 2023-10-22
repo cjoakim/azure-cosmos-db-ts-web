@@ -33,7 +33,10 @@
     </select>
   </div>
   <div class="mb-3">
-    <label for="patch_attributes" class="form-label">Patch Attributes for above Document - +attrName to add, -attrName to delete, attrName to change</label>
+    <label for="patch_attributes" class="form-label">
+      Patch Attributes for the above Document - +attrName to add, -attrName to delete, attrName to change.<br>
+      Only root level attributes are supported in this demo app.
+    </label>
     <input type="text" class="form-control" id="patch_attributes" name="patch_attributes" value="<%= patch_attributes %>">
   </div>
   <div class="mb-3">

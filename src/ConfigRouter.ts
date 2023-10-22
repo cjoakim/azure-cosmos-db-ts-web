@@ -45,7 +45,8 @@ router.get("/", async (req: Request, res: Response) => {
   }
   res.render('config', {
     envVarsList: envVarsList,
-    db_container: req.session.db_container
+    db_container: req.session.db_container,
+    session_id: UIHelper.sessionId(req)
   });
 })
 
