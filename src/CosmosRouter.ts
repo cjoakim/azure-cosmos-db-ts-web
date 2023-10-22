@@ -232,6 +232,9 @@ router.post("/query", async (req: Request, res: Response) => {
 
 router.get("/crud", async (req: Request, res: Response) => {
   let dbsContainers: Array<object> = readDatabasesAndContainersList(req);
+  let diagnostics: object = {};
+  let diagnostics_message = '';
+
   if (dbsContainers.length < 1) {
     res.redirect(GET_COSMOS_DB_METADATA_URL);
     return;
@@ -247,7 +250,9 @@ router.get("/crud", async (req: Request, res: Response) => {
     results_message: '',
     results: '',
     patch_attributes: '',
-    crud_text: JSON.stringify(UIHelper.sampleCosmosDbNoSqlDocument(), null, 2)
+    crud_text: JSON.stringify(UIHelper.sampleCosmosDbNoSqlDocument(), null, 2),
+    diagnostics: null,
+    diagnostics_message: ''
   });
 })
 
@@ -263,7 +268,8 @@ router.post("/crud", async (req: Request, res: Response) => {
     return;
   }
   UIHelper.ensureSession(req);
-
+  let diagnostics: object = {};
+  let diagnostics_message = '';
   let dbname = db_container.split('|')[0].trim();
   let cname = db_container.split('|')[1].trim();
   let patch_attributes = req.body.patch_attributes.trim();
@@ -288,6 +294,8 @@ router.post("/crud", async (req: Request, res: Response) => {
           results_message = util.format(
             'Create - statusCode %s, requestCharge %s', 
             createResp.statusCode, createResp.requestCharge);
+            diagnostics = createResp.diagnostics;
+            diagnostics_message = 'Diagnostics';
           break;
       case "upsert":
           let upsertResp : ItemResponse<Object> = await cosmos.upsertDocumentAsync(dbname, cname, doc);
@@ -295,14 +303,16 @@ router.post("/crud", async (req: Request, res: Response) => {
           results_message = util.format(
             'Upsert - statusCode %s, requestCharge %s', 
             upsertResp.statusCode, upsertResp.requestCharge);
+          diagnostics = upsertResp.diagnostics;
+          diagnostics_message = 'Diagnostics';
           break;
       case "patch":
           UIHelper.logBody(req);
-          console.log(JSON.stringify(doc, null, 2));
           let id = doc['id'];
           let partitionKey = lookupPartitionKeyAttr(req, dbname, cname);
           let partitionKeyValue = doc[partitionKey];
-          console.log(util.format('dbname: %s, cname: %s, id: %s, partitionKey: %s', dbname, cname, id, partitionKeyValue));
+          console.log(util.format('patch - dbname: %s, cname: %s, id: %s, partitionKey: %s, partitionKeyValue: %s',
+            dbname, cname, id, partitionKey, partitionKeyValue));
           let patchOperations = buildPatchOperations(doc, patch_attributes);
           console.log('patchOperations -> ' + JSON.stringify(patchOperations, null, 2));
           let patchResp : ItemResponse<Object> = 
@@ -312,6 +322,9 @@ router.post("/crud", async (req: Request, res: Response) => {
           results_message = util.format(
               'Patch - statusCode %s, requestCharge %s', 
               patchResp.statusCode, patchResp.requestCharge);
+          results = "Patch Operations:\n" + JSON.stringify(patchOperations, null, 2);
+          diagnostics = patchResp.diagnostics;
+          diagnostics_message = 'Diagnostics';
           break;
       case "delete":
           let deleteResp : ItemResponse<Object> = await cosmos.deleteDocumentAsync(dbname, cname, doc['id'], doc['pk']);
@@ -320,6 +333,8 @@ router.post("/crud", async (req: Request, res: Response) => {
           results_message = util.format(
             'Delete - statusCode %s, requestCharge %s', 
             deleteResp.statusCode, deleteResp.requestCharge);
+          diagnostics = deleteResp.diagnostics;
+          diagnostics_message = 'Diagnostics';
           break;
     }
   }
@@ -336,7 +351,9 @@ router.post("/crud", async (req: Request, res: Response) => {
     results_message: results_message,
     results: results,
     patch_attributes: patch_attributes,
-    crud_text: crud_text
+    crud_text: crud_text,
+    diagnostics: JSON.stringify(diagnostics, null, 2),
+    diagnostics_message: diagnostics_message
   });
 })
 
