@@ -36,7 +36,7 @@ switch (func) {
 
 async function search() {
     let subfunc = process.argv[3];
-    let apiVersion : string = '2023-07-01-Preview';
+    let apiVersion : string = '2023-10-01-Preview';
     let name : string = null;
     let searchName   : string = null;
     let searchDict   : object = null;

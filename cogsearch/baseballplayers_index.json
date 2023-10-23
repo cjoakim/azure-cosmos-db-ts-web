@@ -110,22 +110,6 @@
           "facetable": "true"
         }
       ]
-    },
-    {
-      "name": "embeddings",
-      "type": "Collection(Edm.Single)",
-      "searchable": true,
-      "retrievable": true,
-      "dimensions": 1536,
-      "vectorSearchConfiguration": "vectorConfig"
     }
-  ],
-  "vectorSearch": {
-    "algorithmConfigurations": [
-        {
-            "name": "vectorConfig",
-            "kind": "hnsw"
-        }
-    ]
-  }
+  ]
 }

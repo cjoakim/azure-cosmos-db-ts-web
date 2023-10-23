@@ -172,6 +172,8 @@ The following screenshot, for example, shows a model deployment named **embeddin
 
 #### Azure Cognitive Search
 
+**NOTE: This section is a work-in-progress as of 10/23.**
+
 At this time, this project assumes that you already have an Azure Cognitive Search
 account with an Index populated from your Cosmos DB container.
 
