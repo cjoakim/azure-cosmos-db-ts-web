@@ -175,8 +175,30 @@ The following screenshot, for example, shows a model deployment named **embeddin
 At this time, this project assumes that you already have an Azure Cognitive Search
 account with an Index populated from your Cosmos DB container.
 
-This repo will be enhanced in October/November 2023 to create a Cognitive Search
-Datasource, Index, and Indexer from specified environment variables.
+Script **cogsearch-baseballplayers-create.ps1** can be executed to create an
+Azure Cognitive Search datasource, index, and indexer.  This script assumes
+that you have a Cosmos DB source database named **dev** with a container
+named **baseballplayers**.  Modify this script as necessary.  Output below:
+
+```
+> tsc      <-- compiles the code on your workstation
+
+> .\cogsearch-baseballplayers-create.ps1
+
+deleting output tmp/search* files ...
+=== delete_indexer
+=== delete_index
+=== delete_datasource
+=== create_cosmos_nosql_datasource
+=== create_index
+=== create_indexer
+=== get_indexer_status
+=== list_datasources
+=== list_indexes
+=== list_indexers
+=== named_search baseballplayers jeterde01_full
+done
+```
 
 ### Deployment - With Docker Compose on Developer Workstation
 
