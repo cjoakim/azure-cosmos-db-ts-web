@@ -29,50 +29,49 @@ Choose the mode that best fits your skills and workstation/laptop configuration.
 
 ## Screen Shots
 
-
-### About Page
+---
 
 <p align="center">
   <img src="docs/images/about-page.png" width="100%">
 </p>
 
-### Configuration Page
+---
 
 <p align="center">
   <img src="docs/images/configuration-page.png" width="100%">
 </p>
 
-### Cosmos DB Metadata Page
+---
 
 <p align="center">
   <img src="docs/images/cosmosdb-metadata-page.png" width="100%">
 </p>
 
-### Cosmos DB Upload Page
+---
 
 <p align="center">
   <img src="docs/images/cosmosdb-upload-page.png" width="100%">
 </p>
 
-### Cosmos DB Query Page
+---
 
 <p align="center">
   <img src="docs/images/cosmosdb-query-page.png" width="100%">
 </p>
 
-### Cosmos DB CRUD Operations Page
+---
 
 <p align="center">
   <img src="docs/images/cosmosdb-crud-page.png" width="100%">
 </p>
 
-### Open AI Page
+---
 
 <p align="center">
   <img src="docs/images/openai-page.png" width="100%">
 </p>
 
-### Cognitive Search Page
+---
 
 <p align="center">
   <img src="docs/images/cognitive-search-page.png" width="100%">
