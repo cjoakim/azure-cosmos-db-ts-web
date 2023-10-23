@@ -25,57 +25,7 @@ Choose the mode that best fits your skills and workstation/laptop configuration.
   <img src="docs/architecture.png" width="100%">
 </p>
 
----
-
-## Screen Shots
-
----
-
-<p align="center">
-  <img src="docs/images/about-page.png" width="90%">
-</p>
-
----
-
-<p align="center">
-  <img src="docs/images/configuration-page.png" width="90%">
-</p>
-
----
-
-<p align="center">
-  <img src="docs/images/cosmosdb-metadata-page.png" width="90%">
-</p>
-
----
-
-<p align="center">
-  <img src="docs/images/cosmosdb-upload-page.png" width="90%">
-</p>
-
----
-
-<p align="center">
-  <img src="docs/images/cosmosdb-query-page.png" width="90%">
-</p>
-
----
-
-<p align="center">
-  <img src="docs/images/cosmosdb-crud-page.png" width="90%">
-</p>
-
----
-
-<p align="center">
-  <img src="docs/images/openai-page.png" width="90%">
-</p>
-
----
-
-<p align="center">
-  <img src="docs/images/cognitive-search-page.png" width="90%">
-</p>
+See screenshots of the deployed application [here](SCREENSHOTS.md)
 
 ---
 
@@ -233,7 +183,7 @@ then enter the following command:
 > az login
 ```
 
-The edit file **provision-webapp-aci.ps1** with your Azure subscription, 
+The edit file **provision-webapp-aci-prod.ps1** with your Azure subscription, 
 and preferred resource group name, ACI resource name, and region name.
 
 ```
@@ -247,11 +197,11 @@ $azure_location='eastus'
 Then execute this script with the following command:
 
 ```
-> .\provision-webapp-aci.ps1
+> .\provision-webapp-aci-prod.ps1
 ```
 
 Azure will then deploy the DockerHub container to the ACI instance, and the
-applicattion will be available at URL TODO
+application will be available at URL http://<resource_name>.eastus.azurecontainer.io:3000/
 
 ### Deployment - Using the GitHub repository source code
 
