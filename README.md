@@ -5,20 +5,20 @@ NPM package.  Featuring Azure Cosmos DB, et al.
 
 ## Purpose
 
-This web application is intended for these several purposes:
+This web application is intended for these purposes:
 
-- To demonstrate the use of these **Azure PaaS Services**:
+- To demonstrate the use of these **Azure PaaS Services**
   - **Azure Cosmos DB NoSQL API**
   - **Azure OpenAI**
-  - Azure Cognitive Search
-- To provide a working **Node.js, TypeScript starter application**
+  - **Azure Cognitive Search**
+- To provide a working **Node.js and TypeScript starter application**
   - Which uses the **Azure SDK for JavaScript**
-  - Azure SDK invoked by the **azu-js** NPM library for ease of use 
-  - The popular **Express** web framework is used, suitable for either UI applications or microservices
+  - Which also uses the **azu-js** NPM library for ease of use 
+  - Built on the popular **Express** web framework, thus suitable for either UI applications or microservices
 
 The aim is to provide simple and reliable deployments via the use of a Docker image on DockerHub.
 
-There are three **deployment modes** - **code, Docker Compose, or Azure Container Instance (ACI)**.
+There are three **deployment modes** - **code, Docker Compose, or Azure Container Instance (ACI)**.<br>
 Choose the mode that best fits your skills and workstation/laptop configuration.
 
 <p align="center">
