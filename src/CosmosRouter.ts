@@ -10,6 +10,7 @@ import { Request, Response, Router } from 'express';
 import { ItemResponse, SqlQuerySpec, PatchOperation, PatchOperationType } from "@azure/cosmos";
 import { BulkLoadResult, CosmosNoSqlUtil, CosmosNoSqlAccountMeta } from "azu-js";
 import { UIHelper } from "./UIHelper";
+import { CodeSamples } from "./CodeSamples";
 
 const router: Router = Router();
 
@@ -387,7 +388,8 @@ router.get("/upload", async (req: Request, res: Response) => {
     error_message: '',
     results_visibility: 'hidden',
     results_message: '',
-    results: ''
+    results: '',
+    sample_code: CodeSamples.cosmosDbNoSqlBulkLoad()
   });
 })
 
@@ -457,7 +459,8 @@ router.post("/upload", upload.single('file'), async (req: Request, res: Response
     error_message: error_message,
     results_visibility: 'visible',
     results_message: results_message,
-    results: results
+    results: results,
+    sample_code: CodeSamples.cosmosDbNoSqlBulkLoad()
   });
 })
 

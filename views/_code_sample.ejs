@@ -1,0 +1,37 @@
+<hr>
+<table border="0">
+  <tr>
+    <td width="6%" valign="top">
+      <button type="button" class="btn btn-outline-dark btn-sm" id="sample_code_btn" name="sample_code_btn">Code</button>
+    </td>
+    <td width="94%">
+      <table border="1" width="100%" id="sample_code" name="sample_code">
+        <tr>
+          <td width="100%">
+            <pre>
+              <code>
+<%= sample_code %>
+              </code>
+              </pre>
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+
+<script>
+sample_code.style.visibility = 'hidden';  // 'visible' or 'hidden'
+var showCode = false;
+var sampleCodeBtn = document.getElementById("sample_code_btn");
+sampleCodeBtn.onclick = function(e) {
+  if (showCode === false) {
+    showCode = true;
+    sample_code.style.visibility = 'visible';
+  }
+  else {
+    showCode = false;
+    sample_code.style.visibility = 'hidden';
+  }
+};
+</script>
