@@ -12,7 +12,7 @@ router.get("/logon", async (req: Request, res: Response) => {
   req.session = {};
   UIHelper.logSession(req);
   res.render('logon', {
-    message: ''
+    error_message: ''
   });
 })
 
@@ -36,21 +36,21 @@ router.post("/logon", async (req: Request, res: Response) => {
   }
   UIHelper.clearSession(req);
   res.render('logon', {
-    message: 'Invalid user_id & password combination'
+    error_message: 'Invalid user_id & password combination'
   });
 })
 
 router.get("/logoff", async (req: Request, res: Response) => {
   UIHelper.clearSession(req);
   res.render('logon', {
-    message: ''
+    error_message: ''
   });
 })
 
 router.post("/logoff", async (req: Request, res: Response) => {
   UIHelper.clearSession(req);
   res.render('logon', {
-    message: ''
+    error_message: ''
   });
 })
 
@@ -68,7 +68,7 @@ function isAuthenticatedUser(user_id: string, password: string): boolean {
     if (user_id) {
       if (password) {
         let definedUsers = getAuthPairs();
-        console.log('definedUsers: ' + JSON.stringify(definedUsers));
+        //console.log('definedUsers: ' + JSON.stringify(definedUsers));
         for (const defIdPw of definedUsers) {
           if (user_id == defIdPw[0]) {
             if (password == defIdPw[1]) {

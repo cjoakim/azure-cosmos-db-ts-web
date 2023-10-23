@@ -12,12 +12,13 @@
     <input type="text" class="form-control" id="index_name" name="index_name" value="<%= index_name %>">
   </div>
   <div class="mb-3">
-    <label for="text" class="form-label">Enter a Search as well-formed JSON</label>
-    <textarea rows='6' class="form-control" id="text" name="text" value="<%= text %>"><%= text %></textarea>
+    <label for="text" class="form-label">Enter a Search as well-formed JSON.  Or enter the value "reset" to show the sample query.</label>
+    <textarea rows='12' class="form-control" id="text" name="text" value="<%= text %>"><%= text %></textarea>
   </div>
   <div class="mb-3">
     <button type="submit" class="btn btn-primary mb-3" id="submit_button" name="submit_button">Submit</button>
   </div>
+  <p class="text-danger fw-bold" id="error_message" name="error_message"></p>
 </form>
 
 <div id="results_div">
@@ -38,4 +39,5 @@
 <script>
 var results_div = document.getElementById("results_div");
 results_div.style.visibility = '<%= results_visibility %>' // 'visible' or 'hidden'
+setErrorMessage('<%= error_message %>');
 </script>

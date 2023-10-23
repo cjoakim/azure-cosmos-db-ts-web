@@ -1,50 +1,52 @@
 
 <body>
-<div class="container">
-<h3>Azure OpenAI Embeddings Generation and Generative AI</h3>
-<h6>URI: <%= uri %></h6>
+  <div class="container">
+  <h3>Azure OpenAI Embeddings Generation and Generative AI</h3>
+  <h6>URI: <%= uri %></h6>
 
-<p></p>
+  <p></p>
 
-<form method="post">
-  <div class="mb-3">
-    <label for="text" class="form-label">Enter Text for Embeddings Generation, or an Image-Generation Prompt</label>
-    <textarea rows='6' class="form-control" id="text" name="text" value="<%= text %>"><%= text %></textarea>
+  <form method="post">
+    <div class="mb-3">
+      <label for="text" class="form-label">Enter Text for Embeddings Generation, or an Image-Generation Prompt</label>
+      <textarea rows='6' class="form-control" id="text" name="text" value="<%= text %>"><%= text %></textarea>
+    </div>
+    <div class="mb-3 form-check">
+      <input class="form-check-input" type="checkbox" value="yes" id="genImageCheckbox" name="genImageCheckbox">
+      <label class="form-check-label" for="genImageCheckbox">
+        Generate an Image from this text (i.e. - a prompt)?
+      </label>
+    </div>
+    <div class="mb-3">
+      <button type="submit" class="btn btn-primary mb-3" id="submit_button" name="submit_button">Submit</button>
+    </div>
+    <p class="text-danger fw-bold" id="error_message" name="error_message"></p>
+  </form>
+
+  <div id="image_div">
+    <div class="text-center">
+      <img src="<%= image_url %>" class="rounded" alt="OpenAI Dalle generated image" width="99%">
+    </div>
   </div>
-  <div class="mb-3 form-check">
-    <input class="form-check-input" type="checkbox" value="yes" id="genImageCheckbox" name="genImageCheckbox">
-    <label class="form-check-label" for="genImageCheckbox">
-      Generate an Image from this text (i.e. - a prompt)?
-    </label>
-  </div>
-  <div class="mb-3">
-    <button type="submit" class="btn btn-primary mb-3" id="submit_button" name="submit_button">Submit</button>
-  </div>
-</form>
 
-<div id="image_div">
-  <div class="text-center">
-    <img src="<%= image_url %>" class="rounded" alt="OpenAI Dalle generated image" width="99%">
+  <div id="embeddings_div">
+    <p>
+      tokens: <%= tokens %>
+    </p>
+    <pre>
+    <code>
+    <%= results %>
+    </code>
+    </pre>
   </div>
-</div>
 
-<div id="embeddings_div">
-  <p>
-    tokens: <%= tokens %>
-  </p>
-  <pre>
-  <code>
-  <%= results %>
-  </code>
-  </pre>
-</div>
-
-<br>
-<br>
-</div>
+  <br>
+  <br>
+  </div>
 </body>
 
 <script>
+setErrorMessage('<%= error_message %>');
 var embeddings_div = document.getElementById("embeddings_div");
 embeddings_div.style.visibility = '<%= embeddings_div_visibility %>' // 'visible' or 'hidden'
 

@@ -43,6 +43,7 @@ router.get("/metadata", async (req: Request, res: Response) => {
     containersList: containersList,
     dbname: req.session.dbname,
     cname: req.session.cname,
+    error_message: '',
     results_message: '',
     raw_json: '',
     containers: []
@@ -52,6 +53,7 @@ router.get("/metadata", async (req: Request, res: Response) => {
 router.post("/metadata", async (req: Request, res: Response) => {
   UIHelper.ensureSession(req);
   let uri: string = '';
+  let error_message = '';
   try {
     try {
       uri = cosmos.acctUri;
@@ -103,13 +105,15 @@ router.post("/metadata", async (req: Request, res: Response) => {
       containersList: containersList,
       dbname: req.session.dbname,
       cname: req.session.cname,
+      error_message: error_message,
       results_message: 'Raw Metadata JSON',
       raw_json: raw_json,
       containers: uiContainers
     });
   }
   catch (error) {
-      console.log('error in /cosmos/metadata');
+    error_message = 'Error in reading or processing metadata';
+    console.log('error in /cosmos/metadata');
   }
 
   res.render('cosmos_metadata', {
@@ -117,6 +121,7 @@ router.post("/metadata", async (req: Request, res: Response) => {
     containersList: [],
     dbname: req.session.dbname,
     cname: req.session.cname,
+    error_message: '',
     results_message: '',
     raw_json: '',
     containers: []
@@ -137,6 +142,7 @@ router.get("/query", async (req: Request, res: Response) => {
     dbs_containers: dbsContainers,
     curr_db_container: req.session.db_container,
     sql: req.session.sql,
+    error_message: '',
     results: '',
     results_message: '',
     diagnostics: null,
@@ -158,15 +164,16 @@ router.post("/query", async (req: Request, res: Response) => {
   UIHelper.ensureSession(req);
 
   let dbname = db_container.split('|')[0].trim();
-  let cname = db_container.split('|')[1].trim();
+  let cname  = db_container.split('|')[1].trim();
   let sql = req.body.sql;
   let documents = [];
+  let error_message = '';
   let results_message = '';
   let diagnostics: object = {};
   let diagnostics_message = '';
 
   if (!isQueryFormValid(db_container, sql)) {
-    console.log('Invalid query form');
+    error_message = 'Invalid query form';
   }
   else {
     UIHelper.logBody(req);
@@ -195,24 +202,25 @@ router.post("/query", async (req: Request, res: Response) => {
       }
       else {
         // Execute a Query
-        let spec: SqlQuerySpec = {
-          query: sql,
-          parameters: []
+        if (sql.trim().toLowerCase().startsWith('select ')) {
+          let spec: SqlQuerySpec = { query: sql, parameters: [] }
+          let feedResp = await cosmos.queryAsync(dbname, cname, spec);
+          diagnostics = feedResp.diagnostics;
+          diagnostics_message = 'Diagnostics';
+          for (const doc of feedResp.resources) {
+            documents.push(doc);
+          }
+          results_message = util.format('Query found %s documents, %s RU', documents.length, feedResp.requestCharge);
         }
-        let feedResp = await cosmos.queryAsync(dbname, cname, spec);
-        diagnostics = feedResp.diagnostics;
-        diagnostics_message = 'Diagnostics';
-
-        for (const doc of feedResp.resources) {
-          documents.push(doc);
+        else {
+          error_message = 'Query SQL must begin with "select"';
         }
-        results_message = util.format('Query found %s documents, %s RU', documents.length, feedResp.requestCharge);
       }
     }
     catch (error) {
       console.log(error);
+      error_message = 'Error executing query';
     }
-    console.log(JSON.stringify(req.session, null, 2));
   }
 
   res.render('cosmos_query', {
@@ -221,6 +229,7 @@ router.post("/query", async (req: Request, res: Response) => {
     curr_db_container: req.session.db_container,
     dbname: req.session.dbname,
     sql: req.session.sql,
+    error_message: error_message,
     results: JSON.stringify(documents, null, 2),
     results_message: results_message,
     diagnostics: JSON.stringify(diagnostics, null, 2),
@@ -247,6 +256,7 @@ router.get("/crud", async (req: Request, res: Response) => {
     dbs_containers: dbsContainers,
     curr_db_container: req.session.db_container,
     results_visibility: 'hidden',
+    error_message: '',
     results_message: '',
     results: '',
     patch_attributes: '',
@@ -268,10 +278,11 @@ router.post("/crud", async (req: Request, res: Response) => {
     return;
   }
   UIHelper.ensureSession(req);
+  let error_message = '';
   let diagnostics: object = {};
   let diagnostics_message = '';
   let dbname = db_container.split('|')[0].trim();
-  let cname = db_container.split('|')[1].trim();
+  let cname  = db_container.split('|')[1].trim();
   let patch_attributes = req.body.patch_attributes.trim();
   let op = req.body.crud_operation;
   let results_message = '';
@@ -340,13 +351,14 @@ router.post("/crud", async (req: Request, res: Response) => {
   }
   catch (error) {
       crud_text = 'Error: ' + error;
-      results_message = 'Error';
+      results_message = 'Error performing operation: ' + op;
   }
 
   res.render('cosmos_crud', {
     uri: cosmos.acctUri,
     dbs_containers: dbsContainers,
     curr_db_container: req.session.db_container,
+    error_message: error_message,
     results_visibility: 'visible',
     results_message: results_message,
     results: results,
@@ -372,6 +384,7 @@ router.get("/upload", async (req: Request, res: Response) => {
     uri: cosmos.acctUri,
     dbs_containers: dbsContainers,
     curr_db_container: req.session.db_container,
+    error_message: '',
     results_visibility: 'hidden',
     results_message: '',
     results: ''
@@ -384,6 +397,7 @@ router.post("/upload", upload.single('file'), async (req: Request, res: Response
     res.redirect(GET_COSMOS_DB_METADATA_URL);
     return;
   }
+  let error_message = '';
   let results_message = '';
   let results = '';
 
@@ -395,7 +409,7 @@ router.post("/upload", upload.single('file'), async (req: Request, res: Response
       return;
     }
     let dbname = db_container.split('|')[0].trim();
-    let cname = db_container.split('|')[1].trim();
+    let cname  = db_container.split('|')[1].trim();
     results_message = 'Upload Results';
     let generateIds = false;
     if (req.body.genIdsCheckbox) {
@@ -410,29 +424,37 @@ router.post("/upload", upload.single('file'), async (req: Request, res: Response
     if (req.file && req.file.path) {
       try {
         let documents = fu.readJsonArrayFile(req.file.path);
-        console.log('' + documents.length + ' uploaded.  generateIds: ' + generateIds);
-        let blr: BulkLoadResult =
-          await cosmos.loadContainerBulkAsync(dbname, cname, 'upsert', documents, generateIds);
-        results = JSON.stringify(blr, null, 2);
-        UIHelper.deleteUploadFiles();
+        if (documents) {
+          console.log('' + documents.length + ' uploaded.  generateIds: ' + generateIds);
+          let blr: BulkLoadResult =
+            await cosmos.loadContainerBulkAsync(dbname, cname, 'upsert', documents, generateIds);
+          results = JSON.stringify(blr, null, 2);
+          UIHelper.deleteUploadFiles();
+        }
+        else {
+          error_message = 'Error: Unable to parse the uploaded file.  Is it a JSON Array of Objects?';
+          console.log(error_message);
+        }
       }
       catch (error) {
         console.log(error);
-        results = 'Error: Unable to parse the uploaded file';
+        error_message = 'Error: Unable to process the uploaded file';
       }
     }
     else {
-      results = 'Error: No file uploaded';
+      error_message = 'Error: No file uploaded';
     }
   }
   catch (error) {
       console.log('error in post /cosmos/upload');
+      error_message = 'Error: Unable to process the uploaded file.  Is it a JSON Array of Objects?';
   }
 
   res.render('cosmos_upload', {
     uri: cosmos.acctUri,
     dbs_containers: dbsContainers,
     curr_db_container: req.session.db_container,
+    error_message: error_message,
     results_visibility: 'visible',
     results_message: results_message,
     results: results

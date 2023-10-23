@@ -42,3 +42,15 @@
     </div>
 </header>
 <hr>
+
+
+<script>
+
+function setErrorMessage(msg) {
+    var element = document.getElementById("error_message");
+    element.innerHTML = msg;
+    setTimeout(function() { element.innerHTML = ''; }, 10000);
+    return;
+}
+
+</script>

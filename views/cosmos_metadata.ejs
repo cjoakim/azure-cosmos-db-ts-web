@@ -11,12 +11,15 @@
     <li>Click the "Get Account Metadata" button below</li>
     <li>The application will gather and display database, container, and throughput metadata</li>
     <li>This metadata is <strong>required for the other Cosmos DB pages of this application</strong></li>
+    <li>Thus, the other Cosmos DB pages will redirect to this page if your database metadata hasn't been read yet</li>
+    <li>The metadata is stored as a session-specific file on the server</li>
   </ul>
   <br>
   
   <form class="row g-3" method="post">
     <div class="col-3">
       <button type="submit" class="btn btn-primary mb-3">Get Account Metadata</button>
+      <p class="text-danger fw-bold" id="error_message" name="error_message"></p>
     </div>
   </form>
   
@@ -26,9 +29,9 @@
         <th>Database</th>
         <th>Container</th>
         <th>Partition Key(s)</th>
-        <th>TTL</th>
+        <th>Document TTL</th>
         <th>Analytic TTL</th>
-        <th>Throughput</th>
+        <th>Throughput Configuration</th>
       </tr>
     </thead>
     <tbody>
@@ -57,5 +60,9 @@
   <br>
   <br>
   </div>
-  </body>
+</body>
+
+<script>
+setErrorMessage('<%= error_message %>');
+</script>
   

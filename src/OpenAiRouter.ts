@@ -24,6 +24,7 @@ router.get("/", async (req: Request, res: Response) => {
   res.render('openai', {
     uri: uri,
     text: 'A watercolor painting of the planet saturn, primarily light blue with yellow stars',
+    error_message: '',
     embeddings_div_visibility: 'hidden',
     image_div_visibility: 'hidden',
     image_url: '',
@@ -37,8 +38,9 @@ router.post("/", async (req: Request, res: Response) => {
   UIHelper.logBody(req);
   let text = req.body.text;
   let generateImage = false;
+  let error_message = '';
   let results = '';
-  let tokens = ''
+  let tokens = '';
   let embeddings_div_visibility = 'hidden';  // 'visible' or 'hidden'
   let image_div_visibility = 'hidden';
   let image_url = '';
@@ -50,12 +52,13 @@ router.post("/", async (req: Request, res: Response) => {
   }
 
   if (!text) {
-    console.log('Invalid input; no text provided');
+    error_message = 'Invalid input; no text provided';
   }
   else {
     try {
       if (generateImage) {
-        if (text === 'static') {
+        if (text.trim().toLowerCase() === 'demo') {
+          // special hard-coded case for demo purposes
           image_url = 'images/dalle-generated-saturn.png'
           image_div_visibility = 'visible';
         }
@@ -79,6 +82,7 @@ router.post("/", async (req: Request, res: Response) => {
     }
     catch (error) {
       console.log(error);
+      error_message = 'Error processing this request';
     }
   }
 
@@ -86,6 +90,7 @@ router.post("/", async (req: Request, res: Response) => {
   res.render('openai', {
     uri: uri,
     text: text,
+    error_message: error_message,
     embeddings_div_visibility: embeddings_div_visibility,
     image_div_visibility: image_div_visibility,
     image_url: image_url,

@@ -28,23 +28,31 @@ const secretNameFragments : string[] = [ 'KEY', 'USERS'];
 router.get("/", async (req: Request, res: Response) => {
   UIHelper.ensureSession(req);
   let envVarsList: object[] = [];
-  for (let requiredEnvVar of requiredEnvVars.sort()) {
-    let obj = {};
-    obj['name'] = requiredEnvVar;
-    obj['value'] = '' + process.env[requiredEnvVar]; // default to full value
-
-    if (envvarContainsSecret(requiredEnvVar)) {
-      obj['value'] = obj['value'].substring(0, 4) + '...'; // truncate secrets
-    }
-    else {
-      if (requiredEnvVar.includes('CONN_STR')) {
-        obj['value'] = obj['value'].substring(0, 25) + '...'; // truncate connection strings
+  let error_message = '';
+  try {
+    for (let requiredEnvVar of requiredEnvVars.sort()) {
+      let obj = {};
+      obj['name'] = requiredEnvVar;
+      obj['value'] = '' + process.env[requiredEnvVar]; // default to full value
+      
+      if (envvarContainsSecret(requiredEnvVar)) {
+        obj['value'] = obj['value'].substring(0, 4) + '...'; // truncate secrets
       }
+      else {
+        if (requiredEnvVar.includes('CONN_STR')) {
+          obj['value'] = obj['value'].substring(0, 25) + '...'; // truncate connection strings
+        }
+      }
+      envVarsList.push(obj);
     }
-    envVarsList.push(obj);
   }
+  catch (error) {
+      error_message = 'Error processing this request';
+  }
+
   res.render('config', {
     envVarsList: envVarsList,
+    error_message: error_message,
     db_container: req.session.db_container,
     session_id: UIHelper.sessionId(req)
   });

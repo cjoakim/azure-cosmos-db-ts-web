@@ -1,51 +1,53 @@
 
 <body>
-<div class="container">
-<h3>Azure Cosmos DB NoSQL Account - Queries and Point-Reads</h3>
+  <div class="container">
+  <h3>Azure Cosmos DB NoSQL Account - Queries and Point-Reads</h3>
 
-<p></p>
+  <p></p>
 
-<form method="post">
-  <div class="mb-3">
-    <label for="db_container" class="form-label">Database & Container => Partition Key</label>
-    <select class="form-select" id="db_container" name="db_container">
-      <% for(var i = 0; i < dbs_containers.length; i++) { %>
-        <option value="<%= dbs_containers[i]['sortKey'] %>"> <%= dbs_containers[i]['sortKey'] %> => <%= dbs_containers[i]['pk'] %> </option>
-      <% } %>
-    </select>
+  <form method="post">
+    <div class="mb-3">
+      <label for="db_container" class="form-label">Database & Container => Partition Key</label>
+      <select class="form-select" id="db_container" name="db_container">
+        <% for(var i = 0; i < dbs_containers.length; i++) { %>
+          <option value="<%= dbs_containers[i]['sortKey'] %>"> <%= dbs_containers[i]['sortKey'] %> => <%= dbs_containers[i]['pk'] %> </option>
+        <% } %>
+      </select>
+    </div>
+    <div class="mb-3">
+      <label for="sql" class="form-label">Enter a SQL Query, or just id and partition key values for a point-read</label>
+      <textarea rows='8' class="form-control" id="sql" name="sql" value="<%= sql %>"><%= sql %></textarea>
+    </div>
+    <div class="mb-3">
+      <button type="submit" class="btn btn-primary mb-3">Submit</button>
+    </div>
+    <p class="text-danger fw-bold" id="error_message" name="error_message"></p>
+  </form>
+
+  <hr>
+  <h5><%= results_message %></h5>
+  <pre>
+  <code>
+  <%= results %>
+  </code>
+  </pre>
+  <br>
+
+  <hr>
+  <h5><%= diagnostics_message %></h5>
+  <pre>
+  <code>
+  <%= diagnostics %>
+  </code>
+  </pre>
+
+  <br>
+  <br>
   </div>
-  <div class="mb-3">
-    <label for="sql" class="form-label">Enter a SQL Query, or just id and partition key values for a point-read</label>
-    <textarea rows='8' class="form-control" id="sql" name="sql" value="<%= sql %>"><%= sql %></textarea>
-  </div>
-  <div class="mb-3">
-    <button type="submit" class="btn btn-primary mb-3">Submit</button>
-  </div>
-</form>
-
-<hr>
-<h5><%= results_message %></h5>
-<pre>
-<code>
-<%= results %>
-</code>
-</pre>
-<br>
-
-<hr>
-<h5><%= diagnostics_message %></h5>
-<pre>
-<code>
-<%= diagnostics %>
-</code>
-</pre>
-
-<br>
-<br>
-</div>
 </body>
 
 <script>
 var db_container = document.getElementById("db_container");
 db_container.value = '<%= curr_db_container %>'
+setErrorMessage('<%= error_message %>');
 </script>

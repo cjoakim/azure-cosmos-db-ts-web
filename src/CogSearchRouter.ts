@@ -23,10 +23,16 @@ router.get("/", async (req: Request, res: Response) => {
   UIHelper.ensureSession(req);
   let index_name = req.session.index_name;
 
+  if (req.session.cog_search.length < 2) {
+    req.session.cog_search = UIHelper.sampleCognitiveSearchQuery();
+  }
+
   res.render('cogsearch', {
     uri: uri,
     index_name: req.session.cog_search_index,
     text: req.session.cog_search,
+    error_message: '',
+    results_message: '',
     results_visibility: 'hidden',
     results: ''
   });
@@ -37,37 +43,44 @@ router.post("/", async (req: Request, res: Response) => {
   let text = req.body.text;
   let results = '';
   let results_visibility = 'hidden';
+  let error_message = '';
 
   try {
     UIHelper.ensureSession(req);
-    UIHelper.logBody(req);
     if (queryFormIsValid(index_name, text)) {
       try {
         req.session.cog_search_index = index_name;
-        req.session.cog_search = text;
-        let searchObj = UIHelper.parseJson(text);
-        let csr: CogSearchResponse = await cogSearchUtil.searchIndex(index_name, searchObj);
-        if (csr) {
-          results = JSON.stringify(csr, null, 2);
-          results_visibility = 'visible';
+        if (text === 'reset') {
+          req.session.cog_search = UIHelper.sampleCognitiveSearchQuery();
+        }
+        else {
+          req.session.cog_search = text;
+          let searchObj = UIHelper.parseJson(text);
+          let csr: CogSearchResponse = await cogSearchUtil.searchIndex(index_name, searchObj);
+          if (csr) {
+            results = JSON.stringify(csr, null, 2);
+            results_visibility = 'visible';
+          }
         }
       }
       catch (error) {
         console.log(error);
-        results = 'Error processing this search';
+        error_message = 'Error processing this search';
       }
     }
     else {
-      results = 'Invalid search criteria';
+      error_message = 'Invalid search criteria';
     }
   }
   catch (error) {
-    results = 'Error processing this search';
+    error_message = 'Error processing this search';
   }
 
   res.render('cogsearch', {
     uri: uri,
     index_name: index_name,
+    error_message: error_message,
+    results_message: '',
     text: req.session.cog_search,
     results_visibility: results_visibility,
     results: results

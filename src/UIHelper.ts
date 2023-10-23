@@ -217,10 +217,12 @@ export class UIHelper {
     static sampleCognitiveSearchQuery(): string {
         return `
 {
-  "count": "true",
-  "search": "playerID eq 'henderi01'",
-  "orderby": "playerID",
-  "select": "id,playerID,nameFirst,nameLast,primary_position,embeddings_str"
+    "queryType":  "simple",
+    "search":     "primary_position eq 'SS' +USA +derek",
+    "searchMode": "any",
+    "orderby":    "playerID",
+    "select":     "id,playerID,nameFirst,nameLast,primary_position,birthCountry,embeddings_str",
+    "count":      "true"
 }`.trim();
     }
 
