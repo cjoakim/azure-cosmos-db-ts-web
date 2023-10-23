@@ -159,8 +159,9 @@ These can be used to populate the above two containers, respectively.
 
 #### Azure OpenAI
 
-It is assumed that you have created an **text-embedding-ada-002** model whose name is
-specified in the **AZURE_OPENAI_EMBEDDINGS_DEPLOYMENT** environment variable.
+It is assumed that you have created an **text-embedding-ada-002** model, in your
+**Azure OpenAI** account, whose name is specified in the **AZURE_OPENAI_EMBEDDINGS_DEPLOYMENT**
+environment variable.
 
 The following screenshot, for example, shows a model deployment named **embeddings** Azure OpenAI Studio.
 
