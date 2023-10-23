@@ -32,49 +32,49 @@ Choose the mode that best fits your skills and workstation/laptop configuration.
 ---
 
 <p align="center">
-  <img src="docs/images/about-page.png" width="100%">
+  <img src="docs/images/about-page.png" width="90%">
 </p>
 
 ---
 
 <p align="center">
-  <img src="docs/images/configuration-page.png" width="100%">
+  <img src="docs/images/configuration-page.png" width="90%">
 </p>
 
 ---
 
 <p align="center">
-  <img src="docs/images/cosmosdb-metadata-page.png" width="100%">
+  <img src="docs/images/cosmosdb-metadata-page.png" width="90%">
 </p>
 
 ---
 
 <p align="center">
-  <img src="docs/images/cosmosdb-upload-page.png" width="100%">
+  <img src="docs/images/cosmosdb-upload-page.png" width="90%">
 </p>
 
 ---
 
 <p align="center">
-  <img src="docs/images/cosmosdb-query-page.png" width="100%">
+  <img src="docs/images/cosmosdb-query-page.png" width="90%">
 </p>
 
 ---
 
 <p align="center">
-  <img src="docs/images/cosmosdb-crud-page.png" width="100%">
+  <img src="docs/images/cosmosdb-crud-page.png" width="90%">
 </p>
 
 ---
 
 <p align="center">
-  <img src="docs/images/openai-page.png" width="100%">
+  <img src="docs/images/openai-page.png" width="90%">
 </p>
 
 ---
 
 <p align="center">
-  <img src="docs/images/cognitive-search-page.png" width="100%">
+  <img src="docs/images/cognitive-search-page.png" width="90%">
 </p>
 
 ---
