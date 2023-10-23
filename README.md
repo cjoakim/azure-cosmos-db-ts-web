@@ -20,7 +20,7 @@ The focus of the application is on **Azure Cosmos DB NoSQL API**.
 
 The aim is to provide simple and reliable deployments via the use of a Docker image on DockerHub.
 
-There are three **deployment modes** - **code, Docker Compose, or Azure Container Instance (ACI)**.<br>
+There are three documented **deployment modes** - **code, Docker Compose, or Azure Container Instance (ACI)**.<br>
 Choose the deployment mode that best fits your needs.
 
 See screenshots of the deployed application [here](SCREENSHOTS.md)
@@ -36,7 +36,7 @@ See screenshots of the deployed application [here](SCREENSHOTS.md)
 ## Required Software
 
 The [git source control system](https://git-scm.com/download/win) is required
-for all three deployment modes.
+for all three documented deployment modes.
 
 Clone (i.e. - copy) this GitHub repository to your workstation/laptop with the following command:
 
@@ -213,8 +213,8 @@ and preferred resource group name, ACI resource name, and region name.
 ```
 # Parameters - change these per your Azure environment
 $subscription=$Env:AZURE_SUBSCRIPTION_ID
-$resource_group='gbbcjcosmosplus'
-$resource_name='gbbcjcosmosplus'
+$resource_group='cosmosdbplus'
+$resource_name='cosmosdbplus'
 $azure_location='eastus'
 ```
 
@@ -248,6 +248,8 @@ and point your web-browser to http://localhost:3000
 ```
 > .\web.ps1
 ```
+
+To stop the application enter CTRL-C in the PowerShell tab it's running in.
 
 For macOS and Linux users, the execute the install.sh and web.sh scripts instead.
 
