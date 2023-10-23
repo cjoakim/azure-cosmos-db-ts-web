@@ -4,6 +4,11 @@
 
 .\build.ps1
 
+del tmp\*.*
+del uploads\*.*
+
+tsc 
+
 echo 'docker build...'
 docker build -t cjoakim/azure-cosmos-db-ts-web .
 
