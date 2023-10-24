@@ -289,7 +289,6 @@ For macOS and Linux users, the execute the install.sh and web.sh scripts instead
 
 ## Roadmap / Development Backlog
 
-- Use the REST API to create an Azure Cognitive Search Index populated from Cosmos DB
 - Demonstrate Multi-Region configuration
 - Describe Private-Link configuration
 - Possible "show code" popups
