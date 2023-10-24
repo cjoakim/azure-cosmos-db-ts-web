@@ -96,13 +96,14 @@ code, Docker Compose, or Azure Container Instance.
 ```
 Name                                  Sample Value
 ------------------------------------  -----------------------------------------------
-AZURE_COSMOSDB_NOSQL_RW_KEY1          vxQ7...
+AZURE_COSMOSDB_NOSQL_RW_KEY1          ba9O...
+AZURE_COSMOSDB_NOSQL_RO_KEY1          aD0X...
 AZURE_COSMOSDB_NOSQL_URI              https://gbbcjcdbnosql.documents.azure.com:443/
 AZURE_OPENAI_EMBEDDINGS_DEPLOYMENT    embeddings
 AZURE_OPENAI_KEY1                     b910...
 AZURE_OPENAI_URL                      https://cjz5mxhd2ciwy-openai.openai.azure.com/
-AZURE_SEARCH_ADMIN_KEY                xWzu...
-AZURE_SEARCH_QUERY_KEY                ngMx...
+AZURE_SEARCH_ADMIN_KEY                j9bA...
+AZURE_SEARCH_QUERY_KEY                Smeu...
 AZURE_SEARCH_NAME                     gbbcjsearch
 AZURE_SEARCH_URL                      https://gbbcjsearch.search.windows.net
 AZURE_WEB_AUTH_USERS                  gues...
@@ -112,6 +113,11 @@ PORT                   (optional)     3000
 
 AZURE_SUBSCRIPTION_ID  (optional)     <-- only used in the az CLI deployment scripts
 ```
+
+**AZURE_COSMOSDB_NOSQL_RW_KEY1** is a read-write key,
+while **AZURE_COSMOSDB_NOSQL_RO_KEY1** is a read-only key.
+AZURE_COSMOSDB_NOSQL_RO_KEY1 is used in the Azure Cognitive Search Datasource -
+see cogsearch-baseballplayers-create.ps1.
 
 For example, the Sample Values shown are for my deployment.
 The **secret** values shown above are truncated with **...** characters for obvious reasons.
@@ -132,7 +138,7 @@ The **HTTP PORT** defaults to 3000.
 
 See the NPM **cookie-session** Express library regarding the values for the 
 **AZURE_WEB_COOKIE_KEYS** and **AZURE_WEB_COOKIE_AGE** environment variables,
-but the defaults should be adequate.
+but the default values used in this app should be adequate.
 
 #### Setting Environment Variables
 
@@ -172,15 +178,16 @@ The following screenshot, for example, shows a model deployment named **embeddin
 
 #### Azure Cognitive Search
 
-**NOTE: This section is a work-in-progress as of 10/23.**
-
 At this time, this project assumes that you already have an Azure Cognitive Search
 account with an Index populated from your Cosmos DB container.
 
-Script **cogsearch-baseballplayers-create.ps1** can be executed to create an
-Azure Cognitive Search datasource, index, and indexer.  This script assumes
+However, script **cogsearch-baseballplayers-create.ps1** can be executed to create
+an Azure Cognitive Search Datasource, Index, and Indexer.  This script assumes
 that you have a Cosmos DB source database named **dev** with a container
-named **baseballplayers**.  Modify this script as necessary.  Output below:
+named **baseballplayers**.  Modify this script as necessary.  Also see the
+JSON schema files in the **cogsearch** directory of this repo.
+
+Output below:
 
 ```
 > tsc      <-- compiles the code on your workstation
@@ -286,6 +293,19 @@ For macOS and Linux users, the execute the install.sh and web.sh scripts instead
 - Demonstrate Multi-Region configuration
 - Describe Private-Link configuration
 - Possible "show code" popups
+
+## Related GitHub Repos
+
+- https://github.com/cjoakim/azu-js
+  - Home of the azu-js NPM library
+- https://github.com/cjoakim/azure-cosmos-db-vector-search-openai-python
+  - Vector Search with Python and three Cosmos DB APIs - NoSQL, Mongo vCore, and PostgreSQL
+- https://github.com/cjoakim/azure-cosmosdb-altgraph
+  - Alternative Graph solution using the Cosmos DB NoSQL API
+- https://github.com/cjoakim/azure-cosmosdb-synapse-link
+  - Demonstration of Synapse Link with Cosmos DB and PySpark analytics/processing in Azure Synapse
+- https://github.com/cjoakim/m26-js
+  - Home of the m26-js NPM library
 
 ## A Dataset Used : The Sean Lahman Baseball Database
 

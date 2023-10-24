@@ -6,6 +6,8 @@
  * Chris Joakim, Microsoft, 2023
  */
 
+// Failed to update indexer "baseballplayers", error: "Error with data source: No such host is known.  Please adjust your data source definition in order to proceed."
+
 import util from "util";
 
 import { FileUtil, CogSearchUtil } from "azu-js";
@@ -36,7 +38,7 @@ switch (func) {
 
 async function search() {
     let subfunc = process.argv[3];
-    let apiVersion : string = '2023-10-01-Preview';
+    let apiVersion : string = '2023-10-01-Preview';   // '2020-06-30' // '2023-10-01-Preview';
     let name : string = null;
     let searchName   : string = null;
     let searchDict   : object = null;
@@ -69,7 +71,7 @@ async function search() {
             break;
         case "create_cosmos_nosql_datasource":
             let accountNameEnvVarName = process.argv[4];
-            let accountKeyEnvVarName = process.argv[5];
+            let accountKeyEnvVarName  = process.argv[5];
             let dbname = process.argv[6];
             let collection = process.argv[7];
             resp = await csu.createCosmosNoSqlDatasource(accountNameEnvVarName, accountKeyEnvVarName, dbname, collection);

@@ -7,7 +7,7 @@
     "connectionString": "... populate me ..."
   },
   "container": {
-    "name": "airports",
+    "name": "baseballplayers",
     "query": null
   },
   "dataChangeDetectionPolicy": {
