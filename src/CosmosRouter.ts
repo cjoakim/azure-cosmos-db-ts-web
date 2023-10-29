@@ -54,6 +54,8 @@ router.post("/metadata", async (req: Request, res: Response) => {
   UIHelper.ensureSession(req);
   let uri: string = '';
   let error_message = '';
+  let raw_json = '';
+  let uiContainers = [];
   try {
     try {
       uri = cosmos.acctUri;
@@ -63,8 +65,7 @@ router.post("/metadata", async (req: Request, res: Response) => {
     }
     let meta: CosmosNoSqlAccountMeta = await cosmos.getAccountMetadataAsync();
     let woven = meta.weave();
-    let raw_json = JSON.stringify(woven, null, 2);
-    let uiContainers = [];
+    raw_json = JSON.stringify(woven, null, 2);
     woven.forEach(db => {
       let dbName = db['id'];
       let containers = db['containers'];
@@ -100,16 +101,7 @@ router.post("/metadata", async (req: Request, res: Response) => {
     fu.writeTextFileSync(noSqlDbsContainersFile(req), JSON.stringify(uiContainers, null, 2));
   
     let containersList: object[] = [];
-    res.render('cosmos_metadata', {
-      uri: uri,
-      containersList: containersList,
-      dbname: req.session.dbname,
-      cname: req.session.cname,
-      error_message: error_message,
-      results_message: 'Raw Metadata JSON',
-      raw_json: raw_json,
-      containers: uiContainers
-    });
+
   }
   catch (error) {
     error_message = 'Error in reading or processing metadata';
@@ -121,10 +113,10 @@ router.post("/metadata", async (req: Request, res: Response) => {
     containersList: [],
     dbname: req.session.dbname,
     cname: req.session.cname,
-    error_message: '',
-    results_message: '',
-    raw_json: '',
-    containers: []
+    error_message: error_message,
+    results_message: 'Raw Metadata JSON',
+    raw_json: raw_json,
+    containers: uiContainers
   });
 })
 
